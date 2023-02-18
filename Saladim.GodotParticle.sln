@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saladim.GodotParticle", "Saladim.GodotParticle.csproj", "{5F5128F8-D079-4DD3-9A98-7E3C5296C33E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F5128F8-D079-4DD3-9A98-7E3C5296C33E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F5128F8-D079-4DD3-9A98-7E3C5296C33E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F5128F8-D079-4DD3-9A98-7E3C5296C33E}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{5F5128F8-D079-4DD3-9A98-7E3C5296C33E}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{5F5128F8-D079-4DD3-9A98-7E3C5296C33E}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{5F5128F8-D079-4DD3-9A98-7E3C5296C33E}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A0D0C73-4E75-4CE6-B1FF-94C68B37F1D9}
+	EndGlobalSection
+EndGlobal
