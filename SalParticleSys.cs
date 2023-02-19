@@ -16,23 +16,30 @@ public partial class SalParticleSys : Node2D
     public bool LongShooting { get; set; }
 
     [Export]
-    public float LongShootingShootAmount { get; set; }
+    public float LongShootingShootAmount { get; set; } = 1f;
 
     [Export]
     public bool LocalCoord { get; set; }
 
+    #region Lifetime
+
     [Export(PropertyHint.Range, "0,8,0.02,or_greater"), ExportGroup("Lifetime")]
     public float Lifetime { get; set; } = 5f;
+
+    [Export(PropertyHint.Range, "0,8,0.02,or_greater")]
+    public float LifetimeRandomness { get; set; } = 0f;
+
+    #endregion
 
     #region Appearance
 
     [Export, ExportGroup("Appearance")]
-    public Texture2D Texture { get; set; }
+    public Texture2D Texture { get; set; } = null!;
 
     [Export(PropertyHint.Link)]
     public Vector2 TextureOrginal { get; set; }
     [Export]
-    public Gradient Gradient { get; set; }
+    public Gradient Gradient { get; set; } = null!;
 
     #endregion
 
@@ -78,7 +85,7 @@ public partial class SalParticleSys : Node2D
     {
         var policy = new ParticleUnit.PooledObjectPolicy();
         pool = new DefaultObjectPool<ParticleUnit>(policy);
-        particles = new(100);
+        particles = new(32);
     }
 
     public ParticleUnit Emit()
@@ -86,7 +93,7 @@ public partial class SalParticleSys : Node2D
         var u = pool.Get();
 
         u.MaxLifeTime = Lifetime;
-        u.LifeTime = u.MaxLifeTime;
+        u.LifeTime = FloatRandomize(Lifetime, LifetimeRandomness, r);
 
         u.Position = VectorRandomize(InitPosition, InitPositionRandomness, r);
 
@@ -119,6 +126,11 @@ public partial class SalParticleSys : Node2D
         {
             Emit();
         }
+    }
+
+    public override void _Ready()
+    {
+        Gradient ??= new Gradient();
     }
 
     public override void _Process(double delta)
@@ -158,10 +170,10 @@ public partial class SalParticleSys : Node2D
         if (Engine.IsEditorHint())
         {
             if (Texture is null) return;
-            DrawCircle(InitPosition, 2, Color.Color8(100, 100, 255));
+            DrawCircle(InitPosition, 2, Color.Color8(100, 100, 255, 50));
             DrawRect(
                 new Rect2(InitPosition - InitPositionRandomness, InitPositionRandomness * 2),
-                Color.Color8(100, 100, 255),
+                Color.Color8(100, 100, 255, 50),
                 false,
                 2
                 );
