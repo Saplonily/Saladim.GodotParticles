@@ -1,34 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://cmpo8kpa5c0w0"]
+[gd_scene load_steps=4 format=3 uid="uid://cmpo8kpa5c0w0"]
 
 [ext_resource type="Script" path="res://SalParticleSys.cs" id="1_rmjo7"]
+[ext_resource type="Texture2D" uid="uid://dckxx712lug62" path="res://icon.svg" id="2_pp3i2"]
 
-[sub_resource type="Gradient" id="Gradient_djand"]
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_f2in0"]
-gradient = SubResource("Gradient_djand")
-width = 16
-height = 32
-fill_from = Vector2(0, 1)
-repeat = 2
-
-[sub_resource type="Gradient" id="Gradient_ew4t6"]
-offsets = PackedFloat32Array(0, 0.117264, 0.263844, 0.407166, 0.583062, 0.700326, 0.921824, 0.993485)
-colors = PackedColorArray(1, 0.124572, 0.0864938, 1, 1, 0.512373, 0.20524, 1, 1, 0.983333, 0, 1, 1.68458e-06, 0.821284, 0.187926, 1, 0, 0.762011, 0.76201, 1, 0, 0.207427, 0.999999, 1, 0.765231, 0.431148, 1, 1, 1, 1, 1, 0)
+[sub_resource type="Gradient" id="Gradient_60xle"]
 
 [node name="Sys" type="Node2D"]
-position = Vector2(576, 600)
+position = Vector2(400, 272)
 scale = Vector2(1.657, 1.657)
 script = ExtResource("1_rmjo7")
 LongShooting = true
-LongShootingShootAmount = 1.0
-Texture = SubResource("GradientTexture2D_f2in0")
-TextureOrginal = Vector2(-0.5, -0.5)
-Gradient = SubResource("Gradient_ew4t6")
-InitPositionRandomness = Vector2(300, 30)
-InitSpeed = Vector2(0, -300)
-Accelerate = Vector2(10, 0)
-InitRotation = 3.13841
-InitRotationRandomness = 3.13841
-InitRotationSpeed = -0.0254
-InitRotationSpeedRandomness = 0.3763
+LongShootingShootAmount = 0.01
+ParticleTexture = Array[Texture2D]([ExtResource("2_pp3i2")])
+ParticleGradient = SubResource("Gradient_60xle")
