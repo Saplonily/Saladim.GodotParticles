@@ -12,6 +12,9 @@ public partial class SalParticleSys : Node2D
     protected ObjectPool<ParticleUnit> pool;
     protected float storedAmount;
 
+    [Signal]
+    public delegate void AllLifetimeJustEndEventHandler();
+
 #if TOOLS
 
     [Export]
@@ -21,6 +24,9 @@ public partial class SalParticleSys : Node2D
     public float LongShootingShootAmount { get; set; } = 1f;
 
 #endif
+
+    [Export]
+    public bool EndOnAnimationEnd { get; set; } = false;
 
     [Export]
     public bool LocalCoord { get; set; }
@@ -48,12 +54,31 @@ public partial class SalParticleSys : Node2D
 
     #endregion
 
+    #region Collision
+
+    [Export, ExportGroup("Collision", "Particle")]
+    public bool ParticleEnableCollision { get; set; }
+
+    [Export]
+    public Shape2D ParticleSelfShape { get; set; }
+
+    [Export]
+    public Transform2D ParticleSelfShapeTransform { get; set; }
+
+    [Export]
+    public Godot.Collections.Array<Shape2D> ParticleCollideShapeWiths { get; set; }
+
+    [Export]
+    public Godot.Collections.Array<Transform2D> ParticleCollideShapeWithsTransforms { get; set; }
+
+    #endregion
+
     #region Animation
 
-    [Export(PropertyHint.Range, "0,1,0.01,or_greater"), ExportGroup("Animation", "Particle")]
+    [Export(PropertyHint.Range, "0,10,or_greater"), ExportGroup("Animation", "Particle")]
     public float ParticleAnimationSpeed { get; set; }
 
-    [Export(PropertyHint.Range, "0,1,0.01,or_greater"), ExportGroup("Animation", "Particle")]
+    [Export(PropertyHint.Range, "0,10,or_greater"), ExportGroup("Animation", "Particle")]
     public float ParticleAnimationSpeedRandomness { get; set; }
 
     #endregion
@@ -142,9 +167,15 @@ public partial class SalParticleSys : Node2D
             => input + randomness with { X = randomness.X * Random1m1Float(r), Y = randomness.Y * Random1m1Float(r) };
     }
 
+    public void EmitAt(Vector2 position)
+    {
+        var p = Emit();
+        p.Position = position;
+    }
+
     public void EmitMany(int amount)
     {
-        for (int i = 0; i <= amount; i++)
+        for (int i = 0; i < amount; i++)
         {
             Emit();
         }
@@ -177,18 +208,48 @@ public partial class SalParticleSys : Node2D
             p.Speed += ParticleGravity * (float)delta;
             p.Speed += ParticleAccelerate * (float)delta;
             p.Position += p.Speed * (float)delta;
+            if (ParticleEnableCollision)
+            {
+                var trans = Transform2D.Identity;
+                if (!LocalCoord) trans *= Transform.AffineInverse();
+                trans *= new Transform2D(p.Rotation, Vector2.One, 0, p.Position);
+                int index = 0;
+                foreach (var shape in ParticleCollideShapeWiths)
+                {
+                    if (ParticleSelfShape.Collide(trans, shape, ParticleCollideShapeWithsTransforms[index]))
+                    {
+                        p.Position -= p.Speed * (float)delta;
+                        p.Speed = Vector2.Zero;
+                    }
+                    index++;
+                }
+            }
             p.LifeTime -= (float)delta;
             p.Color = ParticleGradient.Sample(1f - p.LifeTime / p.MaxLifeTime);
             p.Rotation += p.RotationSpeed;
-            p.AnimationProcess += p.AnimationSpeed;
+            p.AnimationProcess += p.AnimationSpeed * (float)delta;
             if ((int)p.AnimationProcess > ParticleTexture.Count - 1)
+            {
                 p.AnimationProcess = 0f;
-            if (p.AnimationProcess < 0f) 
+                if (EndOnAnimationEnd)
+                {
+                    EndParticle(p, i);
+                    continue;
+                }
+            }
+            if (p.AnimationProcess <= 0f)
                 p.AnimationProcess = 0f;
             if (p.LifeTime <= 0)
+                EndParticle(p, i);
+        }
+
+        void EndParticle(ParticleUnit unit, int index)
+        {
+            pool.Return(unit);
+            particles.RemoveAt(index);
+            if (particles.Count == 0)
             {
-                pool.Return(p);
-                particles.RemoveAt(i);
+                EmitSignal(SignalName.AllLifetimeJustEnd);
             }
         }
     }
@@ -206,6 +267,15 @@ public partial class SalParticleSys : Node2D
                 false,
                 2
                 );
+
+            DrawSetTransformMatrix(ParticleSelfShapeTransform);
+            ParticleSelfShape?.Draw(GetCanvasItem(), Color.Color8(255, 255, 255, 127));
+            if (ParticleCollideShapeWiths is not null)
+                for (int i = 0; i < ParticleCollideShapeWiths.Count; i++)
+                {
+                    DrawSetTransformMatrix(ParticleCollideShapeWithsTransforms[i]);
+                    ParticleCollideShapeWiths[i].Draw(GetCanvasItem(), Color.Color8(127, 127, 127, 127));
+                }
         }
 #endif
         foreach (var p in particles)
