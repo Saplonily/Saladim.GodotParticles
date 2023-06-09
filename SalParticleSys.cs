@@ -201,6 +201,7 @@ public partial class SalParticleSys : Node2D
                 trans *= new Transform2D(p.Rotation, Vector2.One, 0, p.Position);
                 trans *= ParticleSelfShapeTransform;
                 int index = 0;
+                bool collide = false;
                 foreach (var shape in ParticleCollideShapeWiths)
                 {
                     Vector2[] points;
@@ -215,15 +216,16 @@ public partial class SalParticleSys : Node2D
                     {
                         Vector2 a = points[0];
                         Vector2 b = points[1];
-                        var nor = -p.Velocity.Normalized();
+                        var nor = -(b - a).Normalized();
                         var len = (b - a).Length();
-                        p.Position += nor * len;
-                    }
-                    else
-                    {
-                        p.Position += moveV;
+                        p.Position += -nor * len + moveV;
+                        collide = true;
                     }
                     index++;
+                }
+                if (!collide)
+                {
+                    p.Position += moveV;
                 }
             }
             else
