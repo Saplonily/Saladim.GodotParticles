@@ -17,22 +17,14 @@ public partial class SalParticleSys : Node2D
 
 #if TOOLS
 
-    [Export]
-    public bool LongShooting { get; set; }
-
-    [Export]
-    public float LongShootingShootAmount { get; set; } = 1f;
-
-    [Export]
-    public bool DebugDraw { get; set; }
+    [Export] public bool LongShooting { get; set; }
+    [Export] public float LongShootingShootAmount { get; set; } = 1f;
+    [Export] public bool DebugDraw { get; set; }
 
 #endif
 
-    [Export]
-    public bool EndOnAnimationEnd { get; set; } = false;
-
-    [Export]
-    public bool LocalCoord { get; set; }
+    [Export] public bool EndOnAnimationEnd { get; set; } = false;
+    [Export] public bool LocalCoord { get; set; }
 
     #region Lifetime
 
@@ -62,20 +54,10 @@ public partial class SalParticleSys : Node2D
     [Export, ExportGroup("Collision", "Particle")]
     public bool ParticleEnableCollision { get; set; }
 
-    [Export]
-    public Shape2D ParticleSelfShape { get; set; } = default!;
-
-    [Export]
-    public Transform2D ParticleSelfShapeTransform { get; set; }
-
-    [Export]
-    public float ParticleBounceRadio { get; set; } = 2f;
-
-    [Export]
-    public Godot.Collections.Array<Shape2D> ParticleCollideShapeWiths { get; set; } = default!;
-
-    [Export]
-    public Godot.Collections.Array<Transform2D> ParticleCollideShapeWithsTransforms { get; set; } = default!;
+    [Export] public Shape2D ParticleSelfShape { get; set; } = default!;
+    [Export] public Transform2D ParticleSelfShapeTransform { get; set; }
+    [Export] public Godot.Collections.Array<Shape2D> ParticleCollideShapeWiths { get; set; } = default!;
+    [Export] public Godot.Collections.Array<Transform2D> ParticleCollideShapeWithsTransforms { get; set; } = default!;
 
     #endregion
 
@@ -97,20 +79,11 @@ public partial class SalParticleSys : Node2D
     [Export, ExportGroup("Position And Speed", "Particle")]
     public Vector2 ParticlePosition { get; set; }
 
-    [Export]
-    public Vector2 ParticlePositionRandomness { get; set; }
-
-    [Export]
-    public Vector2 ParticleSpeed { get; set; }
-
-    [Export]
-    public Vector2 ParticleSpeedRandomness { get; set; }
-
-    [Export]
-    public Vector2 ParticleAccelerate { get; set; }
-
-    [Export]
-    public Vector2 ParticleGravity { get; set; } = Vector2.Down * 100f;
+    [Export] public Vector2 ParticlePositionRandomness { get; set; }
+    [Export] public Vector2 ParticleSpeed { get; set; }
+    [Export] public Vector2 ParticleSpeedRandomness { get; set; }
+    [Export] public Vector2 ParticleAccelerate { get; set; }
+    [Export] public Vector2 ParticleGravity { get; set; } = Vector2.Down * 100f;
 
     #endregion
 
@@ -238,10 +211,13 @@ public partial class SalParticleSys : Node2D
                         ParticleCollideShapeWithsTransforms[index],
                         Vector2.Zero
                         );
-                    if (points.Length != 0)
+                    if (points.Length is >= 2)
                     {
-                        p.Velocity /= ParticleBounceRadio;
-                        p.Velocity = p.Velocity.Reflect((ParticleSelfShapeTransform.Origin - points[0]).Normalized());
+                        Vector2 a = points[0];
+                        Vector2 b = points[1];
+                        var nor = -p.Velocity.Normalized();
+                        var len = (b - a).Length();
+                        p.Position += nor * len;
                     }
                     else
                     {
@@ -263,17 +239,17 @@ public partial class SalParticleSys : Node2D
                 p.AnimationProcess = 0f;
                 if (EndOnAnimationEnd)
                 {
-                    EndParticle(p, i);
+                    KillParticle(p, i);
                     continue;
                 }
             }
             if (p.AnimationProcess <= 0f)
                 p.AnimationProcess = 0f;
             if (p.LifeTime <= 0)
-                EndParticle(p, i);
+                KillParticle(p, i);
         }
 
-        void EndParticle(ParticleUnit unit, int index)
+        void KillParticle(ParticleUnit unit, int index)
         {
             pool.Return(unit);
             particles.RemoveAt(index);
@@ -317,6 +293,7 @@ public partial class SalParticleSys : Node2D
             trans *= new Transform2D(p.Rotation, Vector2.One, 0, p.Position);
             DrawSetTransformMatrix(trans);
             DrawTexture(ParticleTexture[process], ParticleTextureOrginal * size, p.Color);
+
         }
     }
 

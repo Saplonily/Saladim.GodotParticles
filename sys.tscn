@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://SalParticleSys.cs" id="1_rmjo7"]
 
 [sub_resource type="Gradient" id="Gradient_jj6ye"]
+colors = PackedColorArray(1, 0.811765, 0.74902, 1, 1, 1, 1, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_vnw2d"]
 gradient = SubResource("Gradient_jj6ye")
@@ -15,25 +16,30 @@ colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
 size = Vector2(5, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_130c4"]
+size = Vector2(41.28, 37.81)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mclg2"]
+radius = 15.0
+height = 73.84
 
 [node name="Sys" type="Node2D"]
 position = Vector2(184, 96)
+scale = Vector2(0.8, 0.8)
 script = ExtResource("1_rmjo7")
-LongShootingShootAmount = 20.0
+LongShooting = true
+DebugDraw = true
 LocalCoord = true
 ParticleLifetime = 8.0
 ParticleTexture = Array[Texture2D]([SubResource("GradientTexture1D_vnw2d")])
 ParticleTextureOrginal = Vector2(-0.5, -0.5)
 ParticleGradient = SubResource("Gradient_y3lqs")
-ParticleEnableCollision = true
 ParticleSelfShape = SubResource("RectangleShape2D_4unn4")
 ParticleSelfShapeTransform = Transform2D(1, 0, 0, 1, 0, 0)
 ParticleCollideShapeWiths = Array[Shape2D]([SubResource("RectangleShape2D_130c4"), SubResource("CapsuleShape2D_mclg2")])
-ParticleCollideShapeWithsTransforms = Array[Transform2D]([Transform2D(1, 0, 0, 1, -50, 60), Transform2D(-0.385, 1.75, 2.381, -2.615, -20, 100)])
+ParticleCollideShapeWithsTransforms = Array[Transform2D]([Transform2D(0.52, 0.5, -0.5, 0.52, -78.45, 184.36), Transform2D(1, 0, 0, 1, 39.82, 100)])
 ParticlePositionRandomness = Vector2(0, 10)
-ParticleSpeed = Vector2(0, 100)
-ParticleSpeedRandomness = Vector2(100, 0)
+ParticleSpeed = Vector2(0, 25)
+ParticleSpeedRandomness = Vector2(10, 25)
+ParticleGravity = Vector2(0, 1)
 ParticleRotation = 3.14159
 ParticleRotationRandomness = 3.14159
